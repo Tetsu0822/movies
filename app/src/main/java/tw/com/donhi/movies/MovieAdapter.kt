@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import coil.load
 import tw.com.donhi.movies.databinding.RowMovieBinding
 
 class MovieAdapter(val movies: List<Movie>) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
@@ -31,5 +32,8 @@ class MovieAdapter(val movies: List<Movie>) : RecyclerView.Adapter<MovieAdapter.
         val movie = movies.get(position)
         holder.view.movieTitle.text = movie.title
         holder.view.moviePop.text = movie.popularity.toString()
+        holder.view.moviePoster.load("https://image.tmdb.org/t/p/w500${movie.poster_path}") {
+
+        }
     }
 }
