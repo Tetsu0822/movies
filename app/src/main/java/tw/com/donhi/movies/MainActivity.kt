@@ -10,6 +10,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ import tw.com.donhi.movies.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var adapter: MovieAdapter
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     val TAG = MainActivity::class.java.simpleName
@@ -28,6 +31,14 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
+
+        //取得 RecycleView 並做相關設定
+        val recycler = binding.content.recycler
+        recycler.setHasFixedSize(true)
+        recycler.layoutManager = LinearLayoutManager(this)
+
         val client = OkHttpClient()
         CoroutineScope(Dispatchers.IO).launch {
             val request = Request.Builder()
@@ -38,7 +49,20 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             val response = client.newCall(request).execute()
-            Log.d(TAG, "onCreate: ${response.body?.string()}")
+            val json = response.body?.string()
+            Log.d(TAG, "onCreate: $json")
+
+            val result = Gson().fromJson(json, MovieResult::class.java)
+            result.results.forEach { movie ->
+                Log.d(TAG, "onCreate: ${movie.title}")
+            }
+            //Adapter
+            adapter = MovieAdapter(result.results)
+            //讓程式碼在UI執行緒裡執行
+            runOnUiThread{
+                recycler.adapter = adapter
+            }
+
         }
 
         binding.fab.setOnClickListener { view ->
