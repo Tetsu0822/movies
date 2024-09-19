@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil.load
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import tw.com.donhi.movies.databinding.RowMovieBinding
 
 class MovieAdapter(val movies: List<Movie>) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
@@ -33,7 +35,15 @@ class MovieAdapter(val movies: List<Movie>) : RecyclerView.Adapter<MovieAdapter.
         holder.view.movieTitle.text = movie.title
         holder.view.moviePop.text = movie.popularity.toString()
         holder.view.moviePoster.load("https://image.tmdb.org/t/p/w500${movie.poster_path}") {
-
+            //預設圖檔
+            placeholder(R.drawable.image)
+            //設定圖檔形狀
+            //圓形
+            transformations(CircleCropTransformation())
+            //四腳圓形
+            //transformations(RoundedCornersTransformation())
+            //圖檔讀取失敗時
+            error(R.drawable.image)
         }
     }
 }
